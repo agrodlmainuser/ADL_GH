@@ -138,6 +138,8 @@ for i, (uid, message) in enumerate(messages):
             print(traceback.print_exc())
 mail_imbox.logout()
 
+#Read the GPS data from the gh corners images
+
 for gh_cor_images_path in gh_setup_dir_list:
     images_cor = []
     for image in os.listdir(f"{gh_cor_images_path}/corners_images"):
@@ -172,3 +174,24 @@ for gh_cor_images_path in gh_setup_dir_list:
         print(f"GH object for {gh_name} has been seccessfully created")
     except:
         print(f"couldn't create gh object for the following gh: {gh_name}")
+
+
+#Delete setup messages from inbox
+
+_, selected_mails = mail.search(None, '(TO "gh_data@agrodl.com")')
+#total number of mails from specific user
+print("Total Messages from gh_data@agrodl.com:" , len(selected_mails[0].split()))
+# save every email from the client seperatly to be able to extract certain data later on
+email_messages = []
+messages = []
+
+for num in selected_mails[0].split():
+    _, data = mail.fetch(num , '(RFC822)')
+    _, bytes_data = data[0]
+
+    #convert the byte data to message
+    email_message = email.message_from_bytes(bytes_data)
+    print("\n===========================================")
+    if "GH SETUP" in email_message["subject"]:
+      mail.store(num, "+FLAGS", "\\Deleted")
+
