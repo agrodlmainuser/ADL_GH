@@ -13,8 +13,7 @@ import os
 from imbox import Imbox # pip install imbox
 import traceback
 
-#for reading the corners photos from the email
-!pip install imbox
+
 # reading directories from xml file
 gh_setup_dir_list = []
 script_params = ADL_Read_XML("AgroDL_GHsetup_0000")
