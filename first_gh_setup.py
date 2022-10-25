@@ -193,5 +193,5 @@ for num in selected_mails[0].split():
     email_message = email.message_from_bytes(bytes_data)
     print("\n===========================================")
     if "GH SETUP" in email_message["subject"]:
-      mail.store(num, "+FLAGS", "\\Deleted")
+        mail.store(num, "+FLAGS", "\\Deleted")
 
