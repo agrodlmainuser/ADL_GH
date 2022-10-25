@@ -176,7 +176,7 @@ for gh_cor_images_path in gh_setup_dir_list:
 
 
 #Delete setup messages from inbox
-
+import email
 _, selected_mails = mail.search(None, '(TO "gh_data@agrodl.com")')
 #total number of mails from specific user
 print("Total Messages from gh_data@agrodl.com:" , len(selected_mails[0].split()))
