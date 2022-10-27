@@ -13,6 +13,8 @@ import imaplib
 import email
 import shutil
 import sys
+import subprocess #for !python linux command
+from zipfile import ZipFile #for !unzip linux command
 
 script_params = ADL_Read_XML("AgroDL_GHRowSetup_0000")
 
@@ -90,23 +92,24 @@ for i, email in enumerate(email_messages):
       os.mkdir(rows_folder)
     except:
       print("rows images folder is already existing checking next GH")
-      continue
     # extracting content from the wetranfer folder
-    %cd AgroML_Test_System/transferwee
-    !python transferwee.py download {link}
+    os.chdir("/content/drive/MyDrive/Colab_Notebooks/AgroML_Test_System/transferwee")
+    subprocess.call(['python', 'transferwee.py', 'download', f'{link}'])
     # get the name of the zip folder which is located last within the dir
     for folder_to_unzip in os.listdir():
       pass
-    wetransfer_dir = !pwd
-    path_to_unzip = f"{wetransfer_dir[0]}/{folder_to_unzip}"
-    !unzip {folder_to_unzip}
+    # extracting downloaded zip file
+    wetransfer_dir = os.getcwd()
+    path_to_unzip = f"{wetransfer_dir}/{folder_to_unzip}"
+    with ZipFile(path_to_unzip , 'r') as zObject:
+      zObject.extractall(path=f"{wetransfer_dir}")
     # get the unzipped folder name
     for unzipped_folder in os.listdir():
       pass
     for image in os.listdir(unzipped_folder):
       if os.path.exists(f"{rows_folder}/{image}"):
         os.remove(f"{rows_folder}/{image}")
-      shutil.move(f"{wetransfer_dir[0]}/{unzipped_folder}/{image}", rows_folder)
+      shutil.move(f"{wetransfer_dir}/{unzipped_folder}/{image}", rows_folder)
     # remove the zipped file and the image folder
     os.remove(folder_to_unzip)
     os.rmdir(unzipped_folder)
@@ -125,23 +128,22 @@ for i, email in enumerate(email_messages):
     # update the onject with the new attribute of the rowes
     save_object(gh_object, f'{gh_dir}/gh_details/{gh_unique_name}.pkl')
     
-# delete emails
-import imaplib
-import email
+# delete email
 _, selected_mails = mail.search(None, '(TO "gh_data@agrodl.com")')
 #total number of mails from specific user
 print("Total Messages from gh_data@agrodl.com:" , len(selected_mails[0].split()))
 email_messages = []
 messages = []
+
 for num in selected_mails[0].split():
     _, data = mail.fetch(num , '(RFC822)')
     _, bytes_data = data[0]
+    import email
     #convert the byte data to message
     email_message = email.message_from_bytes(bytes_data)
     print("\n===========================================")
     if "ROWS SETUP" in email_message["subject"]:
       mail.store(num, "+FLAGS", "\\Deleted")
-
     
     
 
