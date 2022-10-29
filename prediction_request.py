@@ -15,8 +15,6 @@ import traceback
 import sys
 
 script_params = ADL_Read_XML("AgroDL_GH_Crop_Estimation_0000")
-GH_CHECKER = ADL_img_gh()
-
 
 #credentials
 username ="agromltlv@gmail.com"
@@ -103,13 +101,13 @@ for i, (uid, message) in enumerate(messages):
             print(traceback.print_exc())
             continue
     # checking if the coordinates matched the selected gh
-    gh_checking_obj = ADL_img_gh()
+    gh_checking_obj = ADL_img_gh(download_path)
     in_right_path = gh_checking_obj.check_in_current_gh(download_folder, download_path)
     if in_right_path:
       continue
     else:
       new_gh = gh_checking_obj.check_in_grower_dir(current_grower_dir, download_path)
-      if not new gh:
+      if not new_gh:
         print("check with the grower for clarification")
       else:
         new_gh_dir = f"{current_grower_dir}/{new_gh}"
